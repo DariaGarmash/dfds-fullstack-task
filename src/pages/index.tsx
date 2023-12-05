@@ -14,7 +14,6 @@ import { fetchData } from "~/utils";
 import type { ReturnType } from "./api/voyage/getAll";
 import { Button } from "~/components/ui/button";
 import { TABLE_DATE_FORMAT } from "~/constants";
-import { type VoyagePayloadCreate } from "./api/voyage/create";
 import AddVoyage from "~/components/voyage/AddVoyage";
 
 export default function Home() {
@@ -44,10 +43,6 @@ export default function Home() {
     mutation.mutate(voyageId);
   };
 
-  const handleCreate = (data: VoyagePayloadCreate) => {
-    console.log('create voayge, payload', data)
-  };
-
   return (
     <>
       <Head>
@@ -56,7 +51,7 @@ export default function Home() {
       </Head>
       <Layout>
         <section className="w-full py-4">
-          <AddVoyage onCreate={handleCreate} />
+          <AddVoyage />
         </section>
         <Table>
           <TableHeader>

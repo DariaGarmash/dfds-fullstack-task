@@ -1,27 +1,36 @@
-import React, { type FormEvent, useState } from 'react'
-import { type VoyagePayloadCreate } from '~/pages/api/voyage/create'
+import React, { useState } from 'react'
 import { Button } from '../ui/button'
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '../ui/sheet'
+import { useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
+import { type TVoyagePayloadCreate } from '~/pages/api/voyage/create';
+import PostVoaygeForm from './PostVoyageForm';
 
-interface AddVoyageProps {
-    onCreate: (data: VoyagePayloadCreate) => void
-}
-
-const AddVoyage: React.FC<AddVoyageProps> = ({ onCreate }) => {
+const AddVoyage = () => {
     const [open, setOpen] = useState(false);
 
-    const onSubmit = (e: FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        console.log('onSubmit form', e)
-        setOpen(!open)
+    const queryClient = useQueryClient();
+    const mutation = useMutation(
+        async (payload: TVoyagePayloadCreate) => {
+            const response = await fetch(`/api/voyage/create`, {
+                method: "POST",
+                body: JSON.stringify(payload)
+            });
 
-        onCreate({
-            portOfLoading: 'portOfLoading',
-            portOfDischarge: 'portOfDischarge',
-            vesselId: 'clpqok4eq00015lugd16ddxmn',
-            scheduledDeparture: new Date(),
-            scheduledArrival: new Date()
-        })
+            if (!response.ok) {
+                throw new Error("Failed to create the voyage");
+            }
+        },
+        {
+            onSuccess: async () => {
+                await queryClient.invalidateQueries(["voyages"]);
+            },
+        }
+    );
+
+    const onSubmit = (data: TVoyagePayloadCreate) => {
+        mutation.mutate(data)
+        setOpen(false)
     }
     return (
         <Sheet open={open} onOpenChange={setOpen}>
@@ -29,17 +38,13 @@ const AddVoyage: React.FC<AddVoyageProps> = ({ onCreate }) => {
                 <Button variant="default" onClick={() => setOpen(!open)}>Add</Button>
             </SheetTrigger>
             <SheetContent>
-                <SheetHeader>
+                <SheetHeader className='mb-2'>
                     <SheetTitle>New voyage</SheetTitle>
                     <SheetDescription>
                         Please fill out the form to crate a new voayge.
                     </SheetDescription>
                 </SheetHeader>
-                <form action="post" onSubmit={onSubmit}>
-                    <label htmlFor="portOfLoading"></label>
-                    <input type="text" id='portOfLoading' />
-                    <Button variant="default" type='submit'>Save & close</Button>
-                </form>
+                <PostVoaygeForm onSubmit={onSubmit} />
             </SheetContent>
         </Sheet>
     )

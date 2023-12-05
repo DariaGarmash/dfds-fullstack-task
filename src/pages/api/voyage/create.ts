@@ -2,7 +2,7 @@ import type { Voyage } from "@prisma/client";
 import type { NextApiHandler, NextApiResponse, NextApiRequest } from "next";
 import { prisma } from "~/server/db";
 
-export type VoyagePayloadCreate = Omit<Voyage, "id" | "createdAt" | 'updatedAt'>
+export type TVoyagePayloadCreate = Omit<Voyage, "id" | "createdAt" | 'updatedAt'>
 
 const handler: NextApiHandler = async (
   req: NextApiRequest,
@@ -11,7 +11,7 @@ const handler: NextApiHandler = async (
     if (req.method !== "POST") {
       res.status(405).end();
     }
-    const data = JSON.parse(req.body) as VoyagePayloadCreate
+    const data = JSON.parse(req.body) as TVoyagePayloadCreate
     const createdVoyage = await prisma.voyage.create({
       data
     })

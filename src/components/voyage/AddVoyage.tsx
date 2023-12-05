@@ -5,6 +5,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useMutation } from '@tanstack/react-query';
 import { type TVoyagePayloadCreate } from '~/pages/api/voyage/create';
 import PostVoaygeForm from './PostVoyageForm';
+import { toast } from '../ui/use-toast';
 
 const AddVoyage = () => {
     const [open, setOpen] = useState(false);
@@ -24,6 +25,10 @@ const AddVoyage = () => {
         {
             onSuccess: async () => {
                 await queryClient.invalidateQueries(["voyages"]);
+                toast({
+                    description: "A new voyage has beed added successfully",
+                    variant: 'success'
+                });
             },
         }
     );

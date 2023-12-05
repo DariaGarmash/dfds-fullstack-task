@@ -15,6 +15,7 @@ import type { ReturnType } from "./api/voyage/getAll";
 import { Button } from "~/components/ui/button";
 import { TABLE_DATE_FORMAT } from "~/constants";
 import AddVoyage from "~/components/voyage/AddVoyage";
+import { toast } from "~/components/ui/use-toast";
 
 export default function Home() {
   const { data: voyages } = useQuery<ReturnType>(["voyages"], () =>
@@ -29,6 +30,11 @@ export default function Home() {
       });
 
       if (!response.ok) {
+        toast({
+          title: 'Error',
+          description: "Failed to delete the voyage",
+          variant: 'danger'
+        });
         throw new Error("Failed to delete the voyage");
       }
     },

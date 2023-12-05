@@ -9,9 +9,12 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from "src/components/ui/input"
 import { Button } from 'src/components/ui/button'
 import { type TVoyagePayloadCreate } from '~/pages/api/voyage/create'
-import { addDays } from 'date-fns'
 import { useForm } from 'react-hook-form'
 import DateTimePickerSingle from '../ui/datapicker'
+import { useQuery } from '@tanstack/react-query'
+import { fetchData } from '~/utils'
+import { type ReturnType } from '~/pages/api/vessels/getAll'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 
 const postVoyageformSchema = z.object({
     portOfLoading: z.string(),
@@ -28,16 +31,15 @@ interface PostVoaygeFormProps {
 }
 
 const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
+    const { data: vessels } = useQuery<ReturnType>(["vessels"], () =>
+        fetchData("vessels/getAll")
+    );
 
     const today = new Date()
 
     const form = useForm<TPostVoyageFormData>({
         resolver: zodResolver(postVoyageformSchema),
-        defaultValues: {
-            portOfLoading: 'portOfLoading',
-            portOfDischarge: 'portOfDischarge',
-            vesselId: 'clps0zmrb0000uzpoze4dudba'
-        },
+        defaultValues: {},
     })
 
     return (
@@ -53,7 +55,16 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                         <FormItem>
                             <FormLabel>Vessel</FormLabel>
                             <FormControl>
-                                <Input placeholder="" {...field} />
+                                <Select onValueChange={field.onChange} defaultValue={field.value} required>
+                                    <FormControl>
+                                        <SelectTrigger>
+                                            <SelectValue placeholder="Select a vessel" />
+                                        </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                        {vessels?.map(v => <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>)}
+                                    </SelectContent>
+                                </Select>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -66,7 +77,7 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                         <FormItem>
                             <FormLabel>Port of loading</FormLabel>
                             <FormControl>
-                                <Input placeholder="" {...field} />
+                                <Input placeholder="" {...field} required />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -79,7 +90,7 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                         <FormItem>
                             <FormLabel>Port of discharge</FormLabel>
                             <FormControl>
-                                <Input placeholder="" {...field} />
+                                <Input placeholder="" {...field} required />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -94,7 +105,8 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                             <FormControl>
                                 <DateTimePickerSingle
                                     {...field}
-                                    disabled={{ before: today }} />
+                                    disabled={{ before: today }}
+                                    required />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -109,7 +121,8 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                             <FormControl>
                                 <DateTimePickerSingle
                                     {...field}
-                                    disabled={{ before: form.getValues().scheduledDeparture }} />
+                                    disabled={{ before: form.getValues().scheduledDeparture }}
+                                    required />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

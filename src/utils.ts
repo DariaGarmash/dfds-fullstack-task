@@ -18,3 +18,7 @@ export async function fetchData(path: string) {
 
   return response.json();
 }
+
+export const arrayFromNumbers = (length: number) => (
+  Array.from({length: length + 1}, (_, i) => i)
+)

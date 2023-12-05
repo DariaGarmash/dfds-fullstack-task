@@ -13,15 +13,20 @@ import { useForm } from 'react-hook-form'
 import DateTimePickerSingle from '../ui/datapicker'
 import { useQuery } from '@tanstack/react-query'
 import { fetchData } from '~/utils'
-import { type ReturnType } from '~/pages/api/vessels/getAll'
+import { type ReturnTypeVessel } from '~/pages/api/vessels/getAll'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
+import { type ReturnTypeUnitTypes } from '~/pages/api/unitTypes/getAll'
+import { Checkbox } from '../ui/checkbox'
 
 const postVoyageformSchema = z.object({
     portOfLoading: z.string(),
     portOfDischarge: z.string(),
     vesselId: z.string(),
     scheduledDeparture: z.date(),
-    scheduledArrival: z.date()
+    scheduledArrival: z.date(),
+    unitTypes: z.array(z.string()).refine((value) => value.length === 5, {
+        message: "Please selected at least 5 unit types",
+    }),
 })
 
 export type TPostVoyageFormData = z.infer<typeof postVoyageformSchema>
@@ -31,15 +36,21 @@ interface PostVoaygeFormProps {
 }
 
 const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
-    const { data: vessels } = useQuery<ReturnType>(["vessels"], () =>
+    const { data: vessels } = useQuery<ReturnTypeVessel>(["vessels"], () =>
         fetchData("vessels/getAll")
+    );
+
+    const { data: unitTypes } = useQuery<ReturnTypeUnitTypes>(["unitTypes"], () =>
+        fetchData("unitTypes/getAll")
     );
 
     const today = new Date()
 
     const form = useForm<TPostVoyageFormData>({
         resolver: zodResolver(postVoyageformSchema),
-        defaultValues: {},
+        defaultValues: {
+            unitTypes: []
+        },
     })
 
     return (
@@ -123,6 +134,45 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                                     {...field}
                                     disabled={{ before: form.getValues().scheduledDeparture }}
                                     required />
+                            </FormControl>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="unitTypes"
+                    render={(allUnitTypes) => (
+                        <FormItem>
+                            <FormLabel>Unit types</FormLabel>
+                            <FormControl>
+                                <>
+                                    {unitTypes?.map((unitType) => (
+                                        < FormField key={unitType.id}
+                                            control={form.control}
+                                            name="unitTypes"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                        <>
+                                                            <Checkbox className='mr-2'
+                                                                {...field}
+                                                                value={unitType.id}
+                                                                checked={allUnitTypes.field.value?.includes(unitType.id)}
+                                                                onCheckedChange={checked => {
+                                                                    checked ?
+                                                                        field.onChange([...allUnitTypes.field.value, unitType.id]) :
+                                                                        field.onChange(...allUnitTypes.field.value.filter(v => v !== unitType.id))
+                                                                }}
+                                                            />
+                                                            <FormLabel>{unitType.name}</FormLabel>
+                                                        </>
+                                                    </FormControl>
+                                                </FormItem>
+                                            )}
+                                        />
+                                    ))}
+                                </>
                             </FormControl>
                             <FormMessage />
                         </FormItem>

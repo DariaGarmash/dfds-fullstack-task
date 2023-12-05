@@ -6,6 +6,8 @@ import { useMutation } from '@tanstack/react-query';
 import { type TVoyagePayloadCreate } from '~/pages/api/voyage/create';
 import PostVoaygeForm from './PostVoyageForm';
 import { toast } from '../ui/use-toast';
+import { ScrollArea } from '@radix-ui/react-scroll-area';
+import { cn } from '~/utils';
 
 const AddVoyage = () => {
     const [open, setOpen] = useState(false);
@@ -42,14 +44,16 @@ const AddVoyage = () => {
             <SheetTrigger asChild>
                 <Button variant="default" onClick={() => setOpen(!open)}>Add</Button>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent className="w-[600px]">
                 <SheetHeader className='mb-2'>
                     <SheetTitle>New voyage</SheetTitle>
                     <SheetDescription>
                         Please fill out the form to crate a new voayge.
                     </SheetDescription>
                 </SheetHeader>
-                <PostVoaygeForm onSubmit={onSubmit} />
+                <section className={cn(`overflow-y-auto h-[85vh]`)}>
+                    <PostVoaygeForm onSubmit={onSubmit} />
+                </section>
             </SheetContent>
         </Sheet>
     )

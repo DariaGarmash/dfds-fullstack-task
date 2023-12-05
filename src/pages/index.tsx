@@ -10,12 +10,13 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { fetchData } from "~/utils";
+import { cn, fetchData } from "~/utils";
 import type { ReturnType } from "./api/voyage/getAll";
 import { Button } from "~/components/ui/button";
 import { TABLE_DATE_FORMAT } from "~/constants";
 import AddVoyage from "~/components/voyage/AddVoyage";
 import { toast } from "~/components/ui/use-toast";
+import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 
 export default function Home() {
   const { data: voyages } = useQuery<ReturnType>(["voyages"], () =>
@@ -67,6 +68,7 @@ export default function Home() {
               <TableHead>Port of loading</TableHead>
               <TableHead>Port of discharge</TableHead>
               <TableHead>Vessel</TableHead>
+              <TableHead>Unit Types</TableHead>
               <TableHead>&nbsp;</TableHead>
             </TableRow>
           </TableHeader>
@@ -85,6 +87,27 @@ export default function Home() {
                 <TableCell>{voyage.portOfLoading}</TableCell>
                 <TableCell>{voyage.portOfDischarge}</TableCell>
                 <TableCell>{voyage.vessel.name}</TableCell>
+                <TableCell>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        id={voyage.id}
+                        variant="default"
+                        disabled={voyage.unitTypes.length === 0}
+                        className={cn(
+                          "justify-center text-center font-normal",
+                          voyage.unitTypes.length === 0 && "text-muted-foreground"
+                        )}
+                      >
+                        {voyage.unitTypes.length}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0 bg-primary text-primary-foreground p-2" align="center">
+                      <ul className="list-circle">
+                        {voyage.unitTypes.map(unit => <li key={unit.id}>{unit.name} (length: {unit.defaultLength})</li>)}
+                      </ul>
+                    </PopoverContent>
+                  </Popover></TableCell>
                 <TableCell>
                   <Button
                     onClick={() => handleDelete(voyage.id)}

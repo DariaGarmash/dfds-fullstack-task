@@ -19,51 +19,54 @@ type TDateTimePickerSingleProps = Omit<React.HTMLAttributes<HTMLElement>, 'onCha
     onChange: (date?: Date) => void
 }
 
-const DateTimePickerSingle: React.FC<TDateTimePickerSingleProps> = ({ className, value, onChange, ...props }: TDateTimePickerSingleProps) => {
-    const [date, setDate] = React.useState<Date | undefined>(new Date())
+const DatePickerSingle: React.FC<TDateTimePickerSingleProps> = React.forwardRef(
+    ({ className, value, onChange, ...props }: TDateTimePickerSingleProps, ref) => {
+        const [date, setDate] = React.useState<Date | undefined>(new Date())
 
-    React.useEffect(() => {
-        setDate(value)
-    }, [value])
+        React.useEffect(() => {
+            setDate(value)
+        }, [value])
 
-    const onSelect = (selectedDate?: Date) => {
-        setDate(selectedDate)
-        onChange(selectedDate)
-    }
+        const onSelect = (selectedDate?: Date) => {
+            setDate(selectedDate)
+            onChange(selectedDate)
+        }
 
-    return (
-        <div className={cn("grid gap-2", className)}>
-            <Popover>
-                <PopoverTrigger asChild>
-                    <Button
-                        id="date"
-                        variant={"outline"}
-                        className={cn(
-                            "w-[300px] justify-start text-left font-normal",
-                            !date && "text-muted-foreground"
-                        )}
-                    >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {date ?
-                            format(date, DATE_PICKER_FORMAT)
-                            : <span>Pick a date and time</span>
-                        }
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                        {...props}
-                        initialFocus
-                        mode="single"
-                        defaultMonth={date ?? new Date()}
-                        selected={date}
-                        onSelect={onSelect}
-                        numberOfMonths={1}
-                    />
-                </PopoverContent>
-            </Popover>
-        </div>
-    )
-}
+        return (
+            <div className={cn("grid gap-2", className)}>
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            id="date"
+                            variant={"outline"}
+                            className={cn(
+                                "w-[300px] justify-start text-left font-normal",
+                                !date && "text-muted-foreground"
+                            )}
+                        >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {date ?
+                                format(date, DATE_PICKER_FORMAT)
+                                : <span>Pick a date and time</span>
+                            }
+                        </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                            {...props}
+                            initialFocus
+                            mode="single"
+                            defaultMonth={date ?? new Date()}
+                            selected={date}
+                            onSelect={onSelect}
+                            numberOfMonths={1}
+                        />
+                    </PopoverContent>
+                </Popover>
+            </div>
+        )
+    })
 
-export default DateTimePickerSingle
+DatePickerSingle.displayName = 'DatePickerSingle'
+
+export default DatePickerSingle

@@ -10,13 +10,13 @@ import { Input } from "src/components/ui/input"
 import { Button } from 'src/components/ui/button'
 import { type TVoyagePayloadCreate } from '~/pages/api/voyage/create'
 import { useForm } from 'react-hook-form'
-import DateTimePickerSingle from '../ui/datapicker'
 import { useQuery } from '@tanstack/react-query'
 import { fetchData } from '~/utils'
 import { type ReturnTypeVessel } from '~/pages/api/vessels/getAll'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { type ReturnTypeUnitTypes } from '~/pages/api/unitTypes/getAll'
 import { Checkbox } from '../ui/checkbox'
+import DatePickerSingle from '../ui/datapicker'
 
 const generateErrorMessage = (fieldName: string) => `Please provide ${fieldName}.`
 
@@ -126,7 +126,7 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                         <FormItem>
                             <FormLabel>Departure</FormLabel>
                             <FormControl>
-                                <DateTimePickerSingle
+                                <DatePickerSingle
                                     {...field}
                                     disabled={{ before: form.getValues().scheduledArrival ?? today }}
                                     required />
@@ -142,7 +142,7 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                         <FormItem>
                             <FormLabel>Arrival</FormLabel>
                             <FormControl>
-                                <DateTimePickerSingle
+                                <DatePickerSingle
                                     {...field}
                                     disabled={{ before: form.getValues().scheduledDeparture ?? today }}
                                     required />

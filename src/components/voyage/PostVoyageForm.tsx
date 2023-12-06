@@ -36,7 +36,7 @@ const postVoyageformSchema = z.object({
     scheduledArrival: z.date({
         required_error: generateErrorMessage('date for arrival')
     }),
-    unitTypes: z.array(z.string()).refine((value) => value.length === 5, {
+    unitTypes: z.array(z.string()).refine((value) => value.length >= 5, {
         message: "Please selected at least 5 unit types",
     }),
 })
@@ -174,7 +174,7 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                                                                 onCheckedChange={checked => {
                                                                     checked ?
                                                                         field.onChange([...allUnitTypes.field.value, unitType.id]) :
-                                                                        field.onChange(...allUnitTypes.field.value.filter(v => v !== unitType.id))
+                                                                        field.onChange(allUnitTypes.field.value.filter(v => v !== unitType.id))
                                                                 }}
                                                             />
                                                             <FormLabel>{unitType.name}</FormLabel>

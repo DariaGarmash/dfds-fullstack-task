@@ -28,9 +28,7 @@ const AddVoyage = () => {
 
     const onSubmit = (data: TVoyagePayloadCreate) => {
         mutation.mutate(data)
-        if (mutation.isIdle) {
-            setOpen(false)
-        }
+        setOpen(false)
     }
     return (
         <Sheet open={open} onOpenChange={setOpen}>

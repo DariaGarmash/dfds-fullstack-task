@@ -36,9 +36,17 @@ const postVoyageformSchema = z.object({
     scheduledArrival: z.date({
         required_error: generateErrorMessage('arrival date')
     }),
-    unitTypes: z.array(z.string()).refine((value) => value.length >= 5, {
+    unitTypes: z.string().array().min(5, {
         message: "Please selected at least 5 unit types",
-    }),
+    })
+}).superRefine((values, context) => {
+    if (values.portOfLoading === values.portOfDischarge) {
+        context.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: 'Port of loading should be different form port of discharge',
+            path: ['portOfLoading']
+        })
+    }
 })
 
 export type TPostVoyageFormData = z.infer<typeof postVoyageformSchema>

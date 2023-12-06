@@ -15,33 +15,21 @@ import type { ReturnType } from "./api/voyage/getAll";
 import { Button } from "~/components/ui/button";
 import { TABLE_DATE_FORMAT } from "~/constants";
 import AddVoyage from "~/components/voyage/AddVoyage";
-import { toast } from "~/components/ui/use-toast";
 import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
+import { deleteVoayage } from "~/mutateFunctions/voyage";
 
 export default function Home() {
-  const { data: voyages } = useQuery<ReturnType>(["voyages"], () =>
+  const allVoyagesQueryKey = "voyages"
+  const { data: voyages } = useQuery<ReturnType>([allVoyagesQueryKey], () =>
     fetchData("voyage/getAll")
   );
 
   const queryClient = useQueryClient();
   const mutation = useMutation(
-    async (voyageId: string) => {
-      const response = await fetch(`/api/voyage/delete?id=${voyageId}`, {
-        method: "DELETE",
-      });
-
-      if (!response.ok) {
-        toast({
-          title: 'Error',
-          description: "Failed to delete the voyage",
-          variant: 'danger'
-        });
-        throw new Error("Failed to delete the voyage");
-      }
-    },
+    async (voyageId: string) => deleteVoayage(voyageId),
     {
       onSuccess: async () => {
-        await queryClient.invalidateQueries(["voyages"]);
+        await queryClient.invalidateQueries([allVoyagesQueryKey]);
       },
     }
   );

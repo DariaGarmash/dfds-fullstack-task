@@ -6,24 +6,15 @@ import { useMutation } from '@tanstack/react-query';
 import { type TVoyagePayloadCreate } from '~/pages/api/voyage/create';
 import PostVoaygeForm from './PostVoyageForm';
 import { toast } from '../ui/use-toast';
-import { ScrollArea } from '@radix-ui/react-scroll-area';
 import { cn } from '~/utils';
+import { createVoyage } from '~/mutateFunctions/voyage';
 
 const AddVoyage = () => {
     const [open, setOpen] = useState(false);
 
     const queryClient = useQueryClient();
     const mutation = useMutation(
-        async (payload: TVoyagePayloadCreate) => {
-            const response = await fetch(`/api/voyage/create`, {
-                method: "POST",
-                body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to create the voyage");
-            }
-        },
+        async (payload: TVoyagePayloadCreate) => createVoyage(payload),
         {
             onSuccess: async () => {
                 await queryClient.invalidateQueries(["voyages"]);
@@ -37,7 +28,9 @@ const AddVoyage = () => {
 
     const onSubmit = (data: TVoyagePayloadCreate) => {
         mutation.mutate(data)
-        setOpen(false)
+        if (mutation.isIdle) {
+            setOpen(false)
+        }
     }
     return (
         <Sheet open={open} onOpenChange={setOpen}>

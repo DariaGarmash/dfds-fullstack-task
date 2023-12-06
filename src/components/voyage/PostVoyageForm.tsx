@@ -18,12 +18,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { type ReturnTypeUnitTypes } from '~/pages/api/unitTypes/getAll'
 import { Checkbox } from '../ui/checkbox'
 
+const generateErrorMessage = (fieldName: string) => `Please provide ${fieldName}.`
+
 const postVoyageformSchema = z.object({
-    portOfLoading: z.string(),
-    portOfDischarge: z.string(),
-    vesselId: z.string(),
-    scheduledDeparture: z.date(),
-    scheduledArrival: z.date(),
+    portOfLoading: z.string().min(1, {
+        message: generateErrorMessage('port of loading')
+    }),
+    portOfDischarge: z.string().min(1, {
+        message: generateErrorMessage('port of discharge')
+    }),
+    vesselId: z.string().min(1, {
+        message: generateErrorMessage('vessel')
+    }),
+    scheduledDeparture: z.date({
+        required_error: generateErrorMessage('date for departure')
+    }),
+    scheduledArrival: z.date({
+        required_error: generateErrorMessage('date for arrival')
+    }),
     unitTypes: z.array(z.string()).refine((value) => value.length === 5, {
         message: "Please selected at least 5 unit types",
     }),
@@ -88,7 +100,7 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                         <FormItem>
                             <FormLabel>Port of loading</FormLabel>
                             <FormControl>
-                                <Input placeholder="" {...field} required />
+                                <Input {...field} required />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -101,7 +113,7 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                         <FormItem>
                             <FormLabel>Port of discharge</FormLabel>
                             <FormControl>
-                                <Input placeholder="" {...field} required />
+                                <Input {...field} required />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

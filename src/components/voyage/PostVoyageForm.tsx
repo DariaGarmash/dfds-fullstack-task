@@ -21,20 +21,20 @@ import DatePickerSingle from '../ui/datapicker'
 const generateErrorMessage = (fieldName: string) => `Please provide ${fieldName}.`
 
 const postVoyageformSchema = z.object({
-    portOfLoading: z.string().min(1, {
-        message: generateErrorMessage('port of loading')
-    }),
-    portOfDischarge: z.string().min(1, {
+    portOfLoading: z.string().min(2, {
         message: generateErrorMessage('port of discharge')
     }),
-    vesselId: z.string().min(1, {
+    portOfDischarge: z.string().min(2, {
+        message: generateErrorMessage('port of discharge')
+    }),
+    vesselId: z.string().min(2, {
         message: generateErrorMessage('vessel')
     }),
     scheduledDeparture: z.date({
-        required_error: generateErrorMessage('date for departure')
+        required_error: generateErrorMessage('departure date')
     }),
     scheduledArrival: z.date({
-        required_error: generateErrorMessage('date for arrival')
+        required_error: generateErrorMessage('arrival date')
     }),
     unitTypes: z.array(z.string()).refine((value) => value.length >= 5, {
         message: "Please selected at least 5 unit types",
@@ -61,6 +61,9 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
     const form = useForm<TPostVoyageFormData>({
         resolver: zodResolver(postVoyageformSchema),
         defaultValues: {
+            portOfLoading: '',
+            portOfDischarge: '',
+            vesselId: '',
             unitTypes: []
         },
     })
@@ -78,7 +81,7 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                         <FormItem>
                             <FormLabel>Vessel</FormLabel>
                             <FormControl>
-                                <Select onValueChange={field.onChange} defaultValue={field.value} required>
+                                <Select onValueChange={field.onChange} defaultValue={field.value}>
                                     <FormControl>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Select a vessel" />
@@ -100,7 +103,7 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                         <FormItem>
                             <FormLabel>Port of loading</FormLabel>
                             <FormControl>
-                                <Input {...field} required />
+                                <Input {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -113,7 +116,7 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                         <FormItem>
                             <FormLabel>Port of discharge</FormLabel>
                             <FormControl>
-                                <Input {...field} required />
+                                <Input {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

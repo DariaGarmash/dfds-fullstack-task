@@ -10,13 +10,13 @@ import {
   TableHeader,
   TableRow,
 } from "~/components/ui/table";
-import { cn, fetchData } from "~/utils";
+import { fetchData } from "~/utils";
 import type { ReturnType } from "./api/voyage/getAll";
 import { Button } from "~/components/ui/button";
 import { TABLE_DATE_FORMAT } from "~/constants";
 import AddVoyage from "~/components/voyage/AddVoyage";
-import { Popover, PopoverContent, PopoverTrigger } from "@radix-ui/react-popover";
 import { deleteVoayage } from "~/mutateFunctions/voyage";
+import ListInPopover from "~/components/ui/ListInPopover";
 
 export default function Home() {
   const allVoyagesQueryKey = "voyages"
@@ -76,26 +76,11 @@ export default function Home() {
                 <TableCell>{voyage.portOfDischarge}</TableCell>
                 <TableCell>{voyage.vessel.name}</TableCell>
                 <TableCell>
-                  <Popover>
-                    <PopoverTrigger asChild>
-                      <Button
-                        id={voyage.id}
-                        variant="default"
-                        disabled={voyage.unitTypes.length === 0}
-                        className={cn(
-                          "justify-center text-center font-normal",
-                          voyage.unitTypes.length === 0 && "text-muted-foreground"
-                        )}
-                      >
-                        {voyage.unitTypes.length}
-                      </Button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0 bg-primary text-primary-foreground p-2" align="center">
-                      <ul className="list-circle">
-                        {voyage.unitTypes.map(unit => <li key={unit.id}>{unit.name} (length: {unit.defaultLength})</li>)}
-                      </ul>
-                    </PopoverContent>
-                  </Popover></TableCell>
+                  <ListInPopover key={voyage.id}
+                    list={voyage.unitTypes}
+                    triggerButtonId={voyage.id}
+                    generateName={(item) => `${item.name}, length: ${item.defaultLength}`} />
+                </TableCell>
                 <TableCell>
                   <Button
                     onClick={() => handleDelete(voyage.id)}

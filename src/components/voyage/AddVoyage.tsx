@@ -6,7 +6,6 @@ import { useMutation } from '@tanstack/react-query';
 import { type TVoyagePayloadCreate } from '~/pages/api/voyage/create';
 import PostVoaygeForm from './PostVoyageForm';
 import { toast } from '../ui/use-toast';
-import { cn } from '~/utils';
 import { createVoyage } from '~/mutateFunctions/voyage';
 
 const AddVoyage = () => {
@@ -35,14 +34,14 @@ const AddVoyage = () => {
             <SheetTrigger asChild>
                 <Button variant="default" onClick={() => setOpen(!open)}>Add</Button>
             </SheetTrigger>
-            <SheetContent className="w-[600px]">
-                <SheetHeader className='mb-2'>
+            <SheetContent className="w-[600px] flex flex-col">
+                <SheetHeader className='mb-2 flex flex-col'>
                     <SheetTitle>New voyage</SheetTitle>
                     <SheetDescription>
                         Please fill out the form to crate a new voayge.
                     </SheetDescription>
                 </SheetHeader>
-                <section className={cn(`overflow-y-auto h-[85vh]`)}>
+                <section className={`flex flex-col flex-1 overflow-auto`}>
                     <PostVoaygeForm onSubmit={onSubmit} />
                 </section>
             </SheetContent>

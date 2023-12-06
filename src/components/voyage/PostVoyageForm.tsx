@@ -13,10 +13,10 @@ import { useForm } from 'react-hook-form'
 import { useQuery } from '@tanstack/react-query'
 import { fetchData } from '~/utils'
 import { type ReturnTypeVessel } from '~/pages/api/vessels/getAll'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select'
 import { type ReturnTypeUnitTypes } from '~/pages/api/unitTypes/getAll'
 import { Checkbox } from '../ui/checkbox'
 import DatePickerSingle from '../ui/datapicker'
+import SelectAsync from '../ui/selectAsync'
 
 const generateErrorMessage = (fieldName: string) => `Please provide ${fieldName}.`
 
@@ -56,9 +56,7 @@ interface PostVoaygeFormProps {
 }
 
 const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
-    const { data: vessels } = useQuery<ReturnTypeVessel>(["vessels"], () =>
-        fetchData("vessels/getAll")
-    );
+
 
     const { data: unitTypes } = useQuery<ReturnTypeUnitTypes>(["unitTypes"], () =>
         fetchData("unitTypes/getAll")
@@ -89,16 +87,9 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                         <FormItem>
                             <FormLabel>Vessel</FormLabel>
                             <FormControl>
-                                <Select onValueChange={field.onChange} defaultValue={field.value}>
-                                    <FormControl>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Select a vessel" />
-                                        </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                        {vessels?.map(v => <SelectItem key={v.id} value={v.id}>{v.name}</SelectItem>)}
-                                    </SelectContent>
-                                </Select>
+                                <SelectAsync onValueChange={field.onChange} defaultValue={field.value}
+                                    placeholder='Select a vessel'
+                                    pathToFetchOptions='vessels/getAll' queryKey={["vessels"]} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>

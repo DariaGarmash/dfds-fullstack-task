@@ -16,7 +16,7 @@ import { Button } from "~/components/ui/button";
 import { TABLE_DATE_FORMAT } from "~/constants";
 import AddVoyage from "~/components/voyage/AddVoyage";
 import { deleteVoayage } from "~/mutateFunctions/voyage";
-import ListInPopover from "~/components/ui/ListInPopover";
+import ListInPopover from "~/components/ui/listInPopover";
 
 export default function Home() {
   const allVoyagesQueryKey = "voyages"

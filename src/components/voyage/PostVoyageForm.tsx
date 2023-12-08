@@ -139,7 +139,7 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                             <FormControl>
                                 <DatePickerSingle
                                     {...field}
-                                    disabled={{ before: form.getValues().scheduledArrival, after: new Date() }}
+                                    disabled={{ after: form.getValues().scheduledArrival, before: today }}
                                     required />
                             </FormControl>
                             <FormMessage />
@@ -155,7 +155,7 @@ const PostVoaygeForm = ({ onSubmit }: PostVoaygeFormProps) => {
                             <FormControl>
                                 <DatePickerSingle
                                     {...field}
-                                    disabled={{ after: form.getValues().scheduledDeparture ?? new Date() }}
+                                    disabled={{ after: form.getValues().scheduledDeparture ?? today }}
                                     required />
                             </FormControl>
                             <FormMessage />
